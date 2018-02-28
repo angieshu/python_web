@@ -2,16 +2,108 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>Index Page</title>
+		<title>Apple</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js" charset="utf-8"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js" charset="utf-8"></script>
+		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/index.css') }}">
 	</head>
 	<body>
-		<h1>HEEELlllo!!! </h1>
-
+		<div class="header">{{ dataset["name"] }}</div>
+		<div class="btns">
+			<button class="btns-open" onclick='handleClick(".btns-open", 0)'>Open</button>
+			<button class="btns-high" onclick='handleClick(".btns-high", 1)'>High</button>
+			<button class="btns-low" onclick='handleClick(".btns-low", 2)'>Low</button>
+			<button class="btns-close" onclick='handleClick(".btns-close", 3)'>Close</button>
+		</div>
+		<canvas id="chart" width="1000px" height="400px"></canvas>
+		<script src="{{ url_for('static', filename='index.js') }}"></script>
 		<script>
-			let arr = '{{ colunm_names }}';
-			// let arr = JSON.parse('{{ arr }}');
-			// let arr = JSON.parse(tmp);
-			console.log(arr);
+
+			let colors = ['#283593', '#1565C0', '#00B0FF', '#00BCD4'];
+			let pricesToDisplay = [0, 1, 0, 0];		// selected btns. High Price selected by default
+
+
+			// function handleClick(btnName, colorIndex) {
+			//
+			// 	// Change btn color if selected/unselected
+			// 	pricesToDisplay[colorIndex] === 1 ? pricesToDisplay[colorIndex] = 0 : pricesToDisplay[colorIndex] = 1;
+			// 	let btnStyle = pricesToDisplay[colorIndex] === 1 ?
+			// 		{
+			// 			'background-color': colors[colorIndex],
+			// 			'color': 'white',
+			// 		} : {
+			// 			'background-color': 'white',
+			// 			'color': colors[colorIndex],
+			// 		}
+			// 	$(btnName).css(btnStyle);
+			// 	drawNewChart();
+			// }
+			//
+			function getData(dataset) {
+
+				// Getting columns Date and Prices(Open, High, Low, Close) + Average
+				let col_names = dataset.column_names.splice(0, 5);
+
+				let data = {
+					col_names,
+					values: dataset.data,
+					colors
+				}
+				return data;
+			}
+			let data = getData({{dataset|tojson|safe}});
+			//
+			// function getChartData() {
+			// 	let datasets = [];		// datasets for a chart
+			// 	let dataset = [];		// single dataset for one Price (Open, High etc.)
+			// 	let labels = [];		// date labels
+			//
+			// 	let dataSize = data.values.length;
+			// 	let colNum = data.col_names.length;
+			//
+			// 	for (let col = 0; col < colNum; col++) {
+			// 		// Calculate a dataset for selected prices
+			// 		if (pricesToDisplay[col - 1] === 1 || col === 0) {
+			// 			for (let row = dataSize - 1; row > -1; row--) {
+			// 				if (col === 0) labels.push(data.values[row][col]);
+			// 				else dataset.push(data.values[row][col]);
+			// 			}
+			// 			if (col !== 0) {
+			// 				datasets.push({
+			// 					data: dataset,
+			// 					label: data.col_names[col],
+			// 					borderColor: data.colors[col - 1],
+			// 					fill: false
+			// 				});
+			// 				dataset = [];
+			// 			}
+			// 		}
+			// 	}
+			//
+			// 	return {
+			// 		type: 'line',
+			// 		data: { labels, datasets },
+			// 		options: {
+			// 			elements: {
+			// 				point: { radius: 0 }
+			// 			},
+			// 			legend: {
+			// 				display: false
+			// 			}
+			// 		},
+			//
+			// 	}
+			// }
+			//
+			// // Draw new chart
+			function drawNewChart() {
+				chart.destroy();
+				chart = new Chart(document.getElementById("chart").getContext('2d'), getChartData(data, pricesToDisplay));
+			}
+
+			// Building a chart
+			let chart = new Chart(document.getElementById("chart").getContext('2d'), getChartData(data, pricesToDisplay));
 		</script>
 	</body>
 </html>

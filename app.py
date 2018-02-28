@@ -9,13 +9,15 @@ app = Flask(__name__)
 
 API_KEY = 'zC992yeEkw5VTye5PFJY'
 
-@app.route('/:dataset_code')
+@app.route('/apple')
 def apple():
 	r = requests.get('https://www.quandl.com/api/v3/datasets/EOD/AAPL.json?api_key=' + API_KEY)
+	# json_obj = r.text
 	json_obj = r.json()
 
-	column_names = json_obj['dataset']['column_names']
-	return render_template('index.html', column_names=column_names)
+	dataset = json_obj['dataset']
+	return render_template('index.html', dataset=dataset)
+	# return json_obj
 
 @app.route('/')
 def index():
