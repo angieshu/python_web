@@ -3,14 +3,53 @@
 	<head>
 		<meta charset="utf-8">
 		<title>HOME</title>
+		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+		<style>
+			form {
+				display: flex;
+				flex-direction: column;
+			}
+		</style>
 	</head>
 	<body>
-		<h2>HERE</h2>
+		<div class="header"></div>
+		<!-- <form method="POST" action="/info"></form> -->
 		<script>
-			let arr = '{{ arr }}';
-			// let arr = JSON.parse('{{ arr }}');
-			// let arr = JSON.parse(tmp);
-			console.log(arr);
+			function getNames(datasets) {
+
+				// Getting an array of names and dataset codes
+				let names = [];
+				for (data of datasets) {
+					names.push({
+						code: data.dataset_code,
+						name: data.name
+					});
+				}
+				return names;
+			}
+
+			let names = getNames({{datasets|tojson|safe}});
+			// console.log()
+			// printNames() {
+			// 	for (n of names) {
+			// 		let p = document.createElement('p');
+			// 		let name = document.createTextNode(n.name);
+			//
+			// 		p.appendChild(name);
+			// 		document.body.appendChild(p);
+			// 	}
+			// // }
+
+			for (n of names) {
+				let action = '/EOD/' + n.code
+				let form = '<form method="POST" action=' + action + '><button type="submit">' + n.name + '</button></form';
+				console.log(action);
+
+				// $form = '<form method="POST" action="/info"></form>';
+				// let button = '<input type="submit" value=' + n.name + + ' name=' + n.code + '></input>';
+				$('body').append(form);
+				// $('body').append($form);
+			}
 		</script>
 	</body>
 </html>
